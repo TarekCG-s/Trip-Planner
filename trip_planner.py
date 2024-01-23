@@ -60,3 +60,8 @@ class TripPlanner:
                 )
             instructions.append(f"{idx + 1}. {transportation_instructions}")
         return instructions
+
+    def display_trip_instructions(self):
+        instructions = self.get_instructions_for_trip()
+        for line in instructions:
+            print(line)

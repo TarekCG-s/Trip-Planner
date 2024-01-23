@@ -16,25 +16,15 @@ class TripPlanner:
     def __get_list_of_destinations(self) -> List[Destination]:
         destinations = {}
         for card in self.boarding_cards:
-            from_destination_name = card.from_destination
-            to_destination_name = card.to_destination
-
-            from_destination = destinations.get(from_destination_name)
-            to_destination = destinations.get(to_destination_name)
-            if not from_destination:
-                from_destination = Destination(from_destination_name)
-                destinations[from_destination_name] = from_destination
-
-            if not to_destination:
-                to_destination = Destination(to_destination_name)
-
-                destinations[to_destination_name] = to_destination
-
+            from_destination = destinations.setdefault(card.from_destination, Destination(card.from_destination))
+            to_destination = destinations.setdefault(card.to_destination, Destination(card.to_destination))
+            
             from_destination.next = to_destination
             from_destination.transportation_details = card.transportation_details
             to_destination.previous = from_destination
 
         return list(destinations.values())
+
 
     def __get_first_destination(self, destinations: List[Destination]) -> Destination:
         first_destination = None
@@ -53,8 +43,9 @@ class TripPlanner:
 
         return sorted_destinations
 
-    def display_trip_plan(self):
+    def get_instructions_for_trip(self):
         destinations: List[Destination] = self.get_sorted_destinations()
+        instructions = []
         for idx, destination in enumerate(destinations):
             transportation_instructions = ""
             if destination.transportation_details:
@@ -67,4 +58,5 @@ class TripPlanner:
                 transportation_instructions = (
                     "You have arrived at your final destination."
                 )
-            print(f"{idx + 1}. {transportation_instructions}")
+            instructions.append(f"{idx + 1}. {transportation_instructions}")
+        return instructions
